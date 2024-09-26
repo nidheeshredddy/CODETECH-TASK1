@@ -1,0 +1,65 @@
+
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras.datasets import imdb
+from tensorflow.keras.preprocessing import sequence
+
+# Load the IMDb dataset
+(train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=10000)
+
+# Get the word index
+word_index = imdb.get_word_index()
+
+# Preprocess the data
+train_data = sequence.pad_sequences(train_data, maxlen=1000)
+test_data = sequence.pad_sequences(test_data, maxlen=1000)
+
+# Create the model
+model = tf.keras.Sequential([
+    tf.keras.layers.Embedding(10000, 16),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+# Compile the model
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Train the model
+model.fit(train_data, train_labels, epochs=5, batch_size=32, validation_split=0.2)
+
+# Evaluate the model
+test_loss, test_acc = model.evaluate(test_data, test_labels)
+print(f'Test accuracy: {test_acc:.2f}')
+
+# Use the model for sentiment analysis
+def sentiment_analysis(review):
+    # Convert the review to lowercase
+    review = review.lower()
+    
+    # Split the review into words
+    words = review.split()
+    
+    # Convert the words to integers
+    review_int = []
+    for word in words:
+        if word in word_index:
+            review_int.append(word_index[word])
+    
+    # Pad the review to the maximum length
+    review_int = sequence.pad_sequences([review_int], maxlen=1000)
+    
+    # Make a prediction
+    prediction = model.predict(review_int)
+    
+    # Return the sentiment
+    return 'Positive' if prediction > 0.5 else 'Negative'
+
+# Example usage
+review = 'I loved this movie! It was amazing.'
+print(sentiment_analysis(review))  # Output: Positive
+
+# Load the name.basics.tsv file
+name_basics = pd.read_csv('/content/imdb-dataset/name.basics.tsv', sep='\t')
+
+# Load the title.akas.tsv file
+title_akas = pd.read_csv('/content/imdb-dataset/title.akas.tsv', sep='\t')
