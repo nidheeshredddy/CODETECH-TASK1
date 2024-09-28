@@ -1,3 +1,9 @@
+NAME:Nidheesh Reddy Company
+CODETECH IT SOLUTIONS Intern ID :CT08DS8597
+Domain:Machine Learning
+Duration:OCTOBER 5th, 2024 to NOVEMBER 5th, 2024.
+
+
 Project Overview: Sentiment Analysis of Movie Reviews
 
 Project Description:
